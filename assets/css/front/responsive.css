@@ -1,0 +1,53 @@
+@media only screen and (max-width:1920px) {}
+@media only screen and (max-width:1600px) {}
+@media only screen and (max-width:1440px) {}
+@media only screen and (max-width:1366px) {}
+@media only screen and (max-width:1280px) {}
+@media only screen and (max-width:1200px) {}
+@media (max-width: 1024px) {
+    .stepsWrap {
+        overflow-x: auto;
+    }
+    .stepsWrap .step{
+        min-width: 122px;
+        width: 122px;
+    }
+    .fieldsWrapper{ 
+        padding: 0 80px 50px;
+    }
+}
+@media only screen and (max-width:991px) {}
+@media only screen and (max-width:767px) {
+    .topBar h1{
+        font-size: 32px;
+    }
+    .stepsWrap .step {
+        min-width: 100px;
+        width: 100px;
+        padding: 8px;
+    }
+    .fieldsWrapper {
+        padding: 0 24px 50px;
+    }
+    .fieldDetails p {
+        font-size: 16px;
+    }
+    .quizAdvice p {
+        font-size: 16px;
+    }
+    .progressBtn,
+    .nextPrevBtn {
+        font-size: 16px;
+        padding: 16px 24px;
+        text-align: center;
+    }
+    .quizAdvice{
+        padding: 24px 24px 24px 50px;
+    }
+    .quizAdvice::before {
+        left: 10px
+    }
+}
+@media only screen and (max-width:575px) {}
+@media only screen and (max-width:480px) {}
+@media only screen and (max-width:385px) {}

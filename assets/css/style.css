@@ -1,0 +1,48 @@
+.assigned-moderator-select-list {
+    width: 30%;
+}
+
+.admin-question-row-textarea{
+    width: 100%;
+    height: 150px;
+}
+.question-row-container {
+    margin: 5% 0;
+}
+.admin-question-row-label{
+    font-size: 18px;
+}
+.question-row-points-container{
+    align-self: center;
+    text-align: center;
+    display: grid;
+}
+.question-points-actions-container{
+    width: 100%;
+    margin-top: 3%;
+    display: flex;
+    justify-content: center;
+}
+.question-points-actions-container div {
+    background: #a7aaad;
+    margin: 0 5%;
+    border-radius: 20px;
+    height: 20px;
+    width: 20px;
+}
+.question-point-input{
+    width: 100%;
+}
+.question-rule-checkbox-inner-container{
+    margin-top: 2%;
+}
+.question-other-info-container{
+    margin: 3% 0;
+}
+
+.multi-choice-btn-container {
+    margin-top: 5%;
+}
+.multi-choice-btn-table-container {
+    margin-top: 5%;
+}

@@ -1,0 +1,263 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+ul,
+li,
+a,
+.btn-default,
+textarea {
+  margin: 0;
+  padding: 0;
+}
+* {
+  margin: 0;
+  padding: 0;
+}
+a,
+a:hover,
+a:focus {
+  text-decoration: none;
+  color: #000;
+}
+li {
+  list-style-type: none;
+}
+body {
+  overflow-x: hidden;
+  font-family: "Poppins";
+  position: relative;
+  scroll-behavior: smooth;
+}
+.container {
+  max-width: 1400px;
+}
+
+/* Form Wrapper CSS Starts Here */
+
+.formWrapper {
+  padding: 100px 0;
+  background-color: #faf9f9;
+}
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 90px;
+}
+.topBar h1 {
+  font-size: 48px;
+  line-height: 110%;
+  color: #3d3d3d;
+}
+.progressBtn {
+  background-color: #dfdfdf;
+  font-size: 18px;
+  line-height: 100%;
+  color: #212529;
+  border-radius: 8px;
+  border: none;
+  padding: 16px 58px;
+  display: block;
+  margin-left: auto;
+  margin-bottom: 16px;
+}
+.notify {
+  font-size: 18px;
+  line-height: 100%;
+  color: #212529;
+  display: none;
+  position: absolute;
+  right: 0;
+  bottom: -16px;
+}
+
+/* Stepper Form Css Starts Here */
+.stepsWrap {
+  display: flex;
+}
+.stepsWrap .step {
+  width: 10%;
+  background-color: #ffffff;
+  padding: 21px 24px;
+  text-align: center;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.stepsWrap .step .editImg {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background-color: #a22f2c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 0 8px 0;
+}
+.stepsWrap .step .completedImg {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background-color: #3d3d3d;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 0 8px 0;
+}
+.stepsWrap .step.completed {
+  background: #b1b1b1;
+}
+.stepsWrap .step .completedImg {
+  display: none;
+}
+.stepsWrap .step.completed .editImg {
+  display: none;
+}
+.stepsWrap .step.completed .completedImg {
+  display: flex;
+}
+.stepsWrap .step:not(:last-child) {
+  border-right: 1px solid #c9c9c9;
+}
+
+/* Quiz Form Fields Css Starts*/
+/*.quizDetails .quiz:not(:first-of-type) {*/
+/*  display: none;*/
+/*}*/
+
+.quiz-item-hide {
+  display: none;
+}
+.quizTitle {
+  background-color: #d8d8d8;
+  font-size: 26px;
+  font-weight: 600;
+  color: #3d3d3d;
+  padding: 25px 16px;
+}
+.fieldsWrapper {
+  padding: 0 120px 50px;
+}
+.fieldDetails {
+  margin: 40px 0 16px;
+}
+.fieldDetails p {
+  font-size: 18px;
+  line-height: 125%;
+  font-weight: normal;
+  color: #212529;
+  margin-bottom: 16px;
+}
+.fieldsWrapper .checkBox {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.fieldsWrapper .checkBox input[type="checkbox"] {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  cursor: pointer;
+  outline: none;
+  border: none;
+  opacity: 0;
+}
+.fieldsWrapper .checkBox label {
+  width: 100%;
+  background: #d8d9d9;
+  margin-left: 0;
+  margin-top: 0;
+  border-radius: 8px;
+  height: 37px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  line-height: 100%;
+}
+.fieldsWrapper .checkBox label::before {
+  content: "●";
+  margin: 0 6px 0 -12px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+}
+.fieldsWrapper .checkBox label::after {
+  opacity: 0;
+}
+.fieldsWrapper .checkBox input[type="checkbox"]:checked + label {
+  background-color: #faaa1a;
+}
+.textAreaWrap {
+  width: 100%;
+  margin-top: 40px;
+}
+.textAreaWrap textarea {
+  padding: 20px;
+  width: 100%;
+  height: 220px;
+  border-radius: 8px;
+}
+.quizAdvice {
+  background: #d8d9d9;
+  padding: 24px 80px 48px;
+  font-weight: normal;
+  font-size: 18px;
+  position: relative;
+}
+.quizAdvice:before {
+  content: "";
+  width: 40px;
+  height: 40px;
+  background-image: url(../images/advice-icon.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  position: absolute;
+  left: 36px;
+  top: 16px;
+}
+.quizAdvice p {
+  margin-bottom: 14px;
+}
+.fileUploaderWrap {
+  position: relative;
+  margin-top: 40px;
+}
+.fileUploaderWrap input[type="file"] {
+  border: none;
+  max-width: 400px;
+  width: 100% !important;
+  background-color: #dfdfdf;
+  border-radius: 8px;
+  padding: 8px 20px;
+}
+.fileInstruct {
+  margin-top: 20px;
+}
+.formController {
+  text-align: center;
+  margin-top: 46px;
+}
+.nextPrevBtn {
+  background-color: #dfdfdf;
+  border-radius: 8px;
+  font-size: 18px;
+  color: #212529;
+  padding: 16px 60px;
+}
