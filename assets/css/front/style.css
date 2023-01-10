@@ -139,6 +139,9 @@ body {
 .quiz-item-hide {
   display: none;
 }
+.quiz-item-show {
+  display: block;
+}
 .quizTitle {
   background-color: #d8d8d8;
   font-size: 26px;
@@ -260,4 +263,7 @@ body {
   font-size: 18px;
   color: #212529;
   padding: 16px 60px;
+}
+.pre-space {
+  white-space: pre-wrap;
 }

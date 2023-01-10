@@ -56,6 +56,17 @@ jQuery(document).ready(function ($) {
         input.val(val);
     });
 
+    $('.question-rule-description-checkbox').on('change', function () {
+        const that = $(this);
+        const input = that.siblings('.question-rule-description-checkbox-input');
+        let val = 0;
+
+        if (that.is(':checked')) {
+            val = 1;
+        }
+        input.val(val);
+    });
+
     $('.add-multi-choice-btn').on('click', function () {
         let that = $(this);
         let index = that.data('id');

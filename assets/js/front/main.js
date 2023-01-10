@@ -1,31 +1,139 @@
 jQuery(document).ready(function ($) {
-    let current_fs, next_fs, previous_fs;
     let opacity;
+    let activeQuiz;
+    let isQuizComplete = false;
+    let isStepComplete = false;
+    let bodySelector = $('body');
+    const assessmentIdInstance = $('#assessment_id');
+
     const current = 1;
     const steps = $("quiz").length;
-    var activeQuiz;
+
+    const ajaxUrl = ajax_object.ajax_url;
+
+    const continueBtnElement = $("<button>", {id: "continue-quiz-btn", class: "nextPrevBtn next", text: 'Continue'});
+    const backBtnElement = $("<button>", {id: "go-back-quiz-btn", class: "nextPrevBtn next", text: 'Go back'});
+    const submitBtnElement = $("<button>", {id: "submit-quiz-btn", class: "nextPrevBtn next", text: 'Submit'});
 
     initQuizDetail();
+    updateCallToActions();
+
+    bodySelector.on('click', '#continue-quiz-btn', async function (e) {
+        e.preventDefault();
+        let quizCount = getQuizCount();
+        let currentQuiz = $(`#quiz-item-${activeQuiz}`);
+
+        if (activeQuiz >= quizCount) {
+            isQuizComplete = true;
+        }
+
+        let checkAnswers = getCheckAnswers(currentQuiz);
+
+        if (checkAnswers.length <= 0) {
+            alert('Please select answer')
+            return;
+        }
+        let attachment_id = getAttachmentIdInput();
+
+        if (attachment_id.length > 0 && attachment_id.val().length === 0) {
+            alert('Please select attachment')
+            return;
+        }
+
+        let isQuestionSaved = await saveQuestion(checkAnswers);
+        if (!isQuestionSaved) return;
+
+        moveToNextQuizStep(currentQuiz);
+        let current = $(`.step-${activeQuiz}`);
+        current.addClass('completed');
+
+        activeQuiz++;
+
+        $('html, body').animate({
+            scrollTop: $(".formWrapper").offset().top
+        }, 500);
+
+        updateCallToActions()
+    });
+
+    bodySelector.on('click', '#go-back-quiz-btn', function (e) {
+        e.preventDefault();
+        let currentQuiz = $(`#quiz-item-${activeQuiz}`);
+
+        if (activeQuiz <= 1) return;
+        moveToNextQuizStep(currentQuiz, true);
+        // let current = $(`.step-${activeQuiz}`);
+        // current.addClass('completed');
+
+        activeQuiz--;
+
+        $('html, body').animate({
+            scrollTop: $(".formWrapper").offset().top
+        }, 500);
+
+        updateCallToActions();
+    });
+
+    bodySelector.on('change', '.assessment-file', async function (e) {
+        e.preventDefault();
+
+        let that = $(this);
+        let file = e.target.files[0];
+
+        await upload_assessment_attachment(file, that)
+    });
+
+    bodySelector.on('click', '#submit-quiz-btn', async function (e) {
+        e.preventDefault();
+        await submitAssessment()
+    });
+
+    $('.step-item-container').click(async function (e) {
+        e.preventDefault();
+        let that = $(this);
+        let targetQuizId = that.data('id');
+        if (targetQuizId === activeQuiz) return;
+
+        let currentQuiz = $(`#quiz-item-${activeQuiz}`);
+        let targetQuiz = $(`#quiz-item-${targetQuizId}`);
+
+        console.log('currentQuiz ===>', activeQuiz);
+        console.log('targetQuiz ===>', targetQuizId);
+
+        // if (targetQuizId < activeQuiz) {
+            moveToSpecificQuizStep(currentQuiz, targetQuiz);
+            activeQuiz = targetQuizId;
+
+            return;
+        // }
+
+        let checkAnswers = getCheckAnswers(currentQuiz);
+        let quizResponse = await getQuizDetails();
+        // if (checkAnswers.length > 0 && quizResponse){
+        //     moveToSpecificQuizStep(currentQuiz, targetQuiz);
+        //     activeQuiz = quizId;
+        // }
+
+        if (quizResponse) {
+            moveToSpecificQuizStep(currentQuiz, targetQuiz);
+            activeQuiz = targetQuizId;
+        }
+    })
 
     function initQuizDetail() {
-        let instance = $('#quiz-item-1');
-        activeQuiz = 1;
-
-        instance.animate({opacity: 1}, {
-            step: function (now) {
-                opacity = 1 - now;
-                instance.css({
-                    'display': 'block',
-                    'position': 'relative'
-                });
-            },
-            duration: 500
-        });
+        let allQuizElement = $('.quiz');
+        allQuizElement.each(function () {
+            let element = $(this);
+            if (element.hasClass('quiz-item-show')) {
+                activeQuiz = element.data('quiz');
+                return false;
+            }
+        })
     }
 
-    function moveToNextQuizStep(instance) {
+    function moveToNextQuizStep(instance, prev = false) {
         let prevQuiz = instance;
-        let nextQuiz = instance.next();
+        let nextQuiz = prev ? instance.prev() : instance.next();
 
         nextQuiz.show();
 
@@ -33,12 +141,23 @@ jQuery(document).ready(function ($) {
             step: function (now) {
                 opacity = 1 - now;
                 prevQuiz.css({
-                    'display': 'none',
-                    'position': 'relative'
+                    'display': 'none', 'position': 'relative'
                 });
                 nextQuiz.css({'opacity': opacity});
-            },
-            duration: 500
+            }, duration: 500
+        });
+    }
+
+    function moveToSpecificQuizStep(instance, targetInstance) {
+        targetInstance.show();
+        instance.animate({opacity: 0}, {
+            step: function (now) {
+                opacity = 1 - now;
+                instance.css({
+                    'display': 'none', 'position': 'relative'
+                });
+                targetInstance.css({'opacity': opacity});
+            }, duration: 500
         });
     }
 
@@ -47,47 +166,46 @@ jQuery(document).ready(function ($) {
         return quizElement.length;
     }
 
-    function clearAllSteps() {
-        let stepElement = $('.stepsWrap').children('.step');
-        stepElement.each(function () {
-            $(this).removeClass('.completed')
-        })
-    }
+    function updateCallToActions() {
+        let count = getQuizCount();
+        let formController = $('.formController');
+        let backBtnInstance = $('#go-back-quiz-btn');
+        let submitBtnInstance = $('#submit-quiz-btn');
 
-    $('#continue-quiz-btn').click(function (e) {
-        e.preventDefault();
-        let quizCount = getQuizCount();
-        let currentQuiz = $(`#quiz-item-${activeQuiz}`);
-
-        if (activeQuiz > quizCount) {
-            alert('quiz finished!')
+        if (activeQuiz <= 1 || activeQuiz >= count) {
+            if (backBtnInstance.length !== 0) backBtnInstance.remove();
         } else {
-            let checkAnswers = getCheckAnswers(currentQuiz);
-
-            if (checkAnswers.length <= 0) {
-                alert('Please select answer')
-                return;
+            if (backBtnInstance.length === 0) {
+                formController.prepend(backBtnElement)
             }
-
-            saveQuestion(checkAnswers);
-            // moveToNextQuizStep(currentQuiz);
-            // let current = $(`.step-${activeQuiz}`);
-            // current.addClass('completed');
-            //
-            // activeQuiz++;
-            //
-            // $('html, body').animate({
-            //     scrollTop: $(".formWrapper").offset().top
-            // }, 500);
-
         }
 
-        // let nextQuiz = $(`#quiz-item-${activeQuiz}`);
-    })
+        if (isQuizComplete) {
+            formController.prepend(submitBtnElement)
+        } else {
+            submitBtnInstance.remove();
+        }
+    }
+
+    function getDescriptionValue() {
+        let currentQuiz = $(`#quiz-item-${activeQuiz}`);
+        let input = currentQuiz.find('.textarea');
+
+        return input.val();
+    }
+
+    function getAttachmentIdInput() {
+        let currentQuiz = $(`#quiz-item-${activeQuiz}`);
+        let input = currentQuiz.find('.assessment-assessment-id');
+
+        return input;
+    }
 
     function getCheckAnswers(currentQuizInstance) {
         let checkboxes = currentQuizInstance.find('.checkBox');
         let choices = [];
+
+        if (checkboxes.length === 0) return true;
 
         checkboxes.each(function () {
             let that = $(this);
@@ -95,32 +213,92 @@ jQuery(document).ready(function ($) {
             let isChecked = input.is(':checked');
 
             if (isChecked) {
-                choices.push({quiz: activeQuiz, id: input.data('id'), title: input.data('title')})
+                choices.push({id: input.data('id'), title: input.data('title')})
             }
         })
 
         return choices;
     }
 
-    function saveQuestion(answers) {
-        let assessmentId = $('#assessment_id').val();
+    async function saveQuestion(answers) {
+        let assessmentId = assessmentIdInstance.val();
+        let answerDescription = getDescriptionValue();
+        let attachmentIdValue = getAttachmentIdInput().val();
+
         const data = {
             'action': 'save_question',
             'answers': answers,
             'quiz_id': activeQuiz,
-            'assessment_id': assessmentId
+            'assessment_id': assessmentId,
+            'description': answerDescription,
+            'attachment_id': attachmentIdValue
         };
 
-        $.ajax({
-            type: 'POST',
-            url: ajax_object.ajax_url,
-            data: data,
-            success: function (result) {
-                alert(result);
-            },
-            error: function () {
-                alert("error");
-            }
+        let response = await $.ajax({type: 'POST', url: ajax_object.ajax_url, data: data});
+        const {status, message} = response;
+
+        if (!status) alert(message)
+
+        if (status) {
+            $('.progress-message').show();
+
+            setTimeout(function () {
+                $('.progress-message').hide();
+            }, 3000)
+        }
+
+        return status;
+    }
+
+    async function getQuizDetails() {
+        let assessmentId = assessmentIdInstance.val();
+
+        const data = {
+            'action': 'get_quiz_detail', 'quiz_id': activeQuiz, 'assessment_id': assessmentId,
+        };
+
+        let res = await $.ajax({type: 'POST', url: ajax_object.ajax_url, data: data});
+        return res?.status;
+    }
+
+    async function submitAssessment() {
+        let assessmentId = assessmentIdInstance.val();
+        const data = {
+            'action': 'create_assessment_submission', 'assessment_id': assessmentId
+        };
+
+        let response = await $.ajax({type: 'POST', url: ajaxUrl, data: data});
+        const {status, message} = response;
+
+        alert(message);
+
+        if (status) {
+            setTimeout(function () {
+                location.reload();
+            }, 1000);
+            return true;
+        }
+
+        return status;
+    }
+
+    async function upload_assessment_attachment(file, inputInstance) {
+
+        let formData = new FormData();
+
+        formData.append("file", file)
+        formData.append("action", 'upload_assessment_attachment')
+        formData.append("security", ajax_object.security)
+
+        let response = await $.ajax({
+            type: 'POST', url: ajaxUrl, processData: false, contentType: false, data: formData
         });
+
+        const {status, message} = response;
+        alert(message);
+
+        if (status) {
+            inputInstance.siblings('.assessment-assessment-id').val(response?.attachment_id)
+        }
     }
 });

@@ -11,7 +11,23 @@ $i = 0;
         <div class="row question-input-area-container">
             <div class="col-10">
                 <p class="admin-question-row-label">Question #0</p>
-                <textarea class="admin-question-row-textarea" name="question_description[]"></textarea>
+                <input class="form-field question-admin-title form-control" name="question_title[]"/>
+                <div class="admin-question-row-textarea">
+                    <textarea class="form-control description_area" name="question_description[]"></textarea>
+                    <div class="col-12">
+                        <div class="question-rule-checkbox-inner-container">
+                            <label>Supporting.. </label>
+                            <input type="checkbox" class="question-rule-description-checkbox"/>
+                            <input type="hidden" class="question-rule-description-checkbox-input"
+                                   name="is_question_description[]"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="question-advice-row-container">
+                    <label for="question-advice-row-0">Advice</label>
+                    <textarea id="question-advice-row-0" class="form-control"
+                              name="question_advice[]"></textarea>
+                </div>
             </div>
             <div class="col-2 question-row-points-container">
                 <input type="number" class="question-point-input" name="question_point[]"/>
@@ -55,7 +71,11 @@ $i = 0;
             <?php
             $i++;
             $multiple_choice = $field['multiple_choice'];
-//            var_dump($multiple_choice);
+
+            $title = $field['question_title'] ?? '';
+            $question_advice = $field['question_advice'] ?? '';
+            $question_description = $field['question_description'] ?? '';
+            $is_question_description = $field['is_question_description'] ?? '';
             ?>
 
             <input type="hidden" name="question_repeater[]"/>
@@ -63,8 +83,30 @@ $i = 0;
                 <div class="row question-input-area-container">
                     <div class="col-10">
                         <p class="admin-question-row-label">Question #<?php echo $i; ?></p>
-                        <textarea class="admin-question-row-textarea"
-                                  name="question_description[]"><?php if ($field['question_description'] != '') echo esc_attr($field['question_description']); ?></textarea>
+                        <input class="form-field question-admin-title form-control" name="question_title[]"
+                               value="<?php echo esc_attr($title); ?>"/>
+                        <div class="admin-question-row-textarea">
+                            <textarea class="form-control description_area"
+                                      name="question_description[]"><?php echo $question_description; ?></textarea>
+                            <div class="col-12">
+                                <div class="question-rule-checkbox-inner-container">
+                                    <label>Need description?</label>
+                                    <input type="checkbox"
+                                           class="question-rule-description-checkbox" <?php if ($is_question_description == 1) {
+                                        echo "checked='checked'";
+                                    } ?>/>
+                                    <input type="hidden" class="question-rule-description-checkbox-input"
+                                           name="is_question_description[]"
+                                           value="<?php echo $is_question_description; ?>"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="question-advice-row-container">
+                            <label for="question-advice-row-<?php echo $i; ?>">Advice</label>
+                            <textarea id="question-advice-row-<?php echo $i; ?>"
+                                      class="form-control"
+                                      name="question_advice[]"><?php echo $question_advice; ?></textarea>
+                        </div>
                     </div>
                     <div class="col-2 question-row-points-container">
                         <input type="number" class="question-point-input" name="question_point[]"
@@ -111,7 +153,8 @@ $i = 0;
                                                         echo "checked='checked'";
                                                     } ?>
                                                 />
-                                                <input type="hidden" name="multi_choice_check[<?php echo $i; ?>][]" value="<?php if ($item['is_correct'] != '') echo esc_attr($item['is_correct']); ?>"/>
+                                                <input type="hidden" name="multi_choice_check[<?php echo $i; ?>][]"
+                                                       value="<?php if ($item['is_correct'] != '') echo esc_attr($item['is_correct']); ?>"/>
                                             </td>
                                             <td><a class="button remove-row" href="#">Remove</a></td>
                                         </tr>
